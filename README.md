@@ -1,1 +1,8 @@
 # AI-Driven-Predictive-Customer-Satisfaction
+This project is an AI-powered Customer Satisfaction Analysis System developed to analyze British Airways customer reviews and generate meaningful business insights. Using Natural Language Processing (NLP) and the VADER Sentiment Analysis model, the system classifies customer feedback into Positive, Negative, or Neutral sentiments, enabling a better understanding of passenger experiences.
+
+The application also detects common service-related issues such as flight delays, baggage handling problems, customer service concerns, food quality complaints, and seating comfort issues. Based on the identified issue, the system provides actionable recommendations to help improve service quality and customer satisfaction.
+
+An interactive dashboard built with Streamlit and Plotly allows users to visualize sentiment distribution, analyze issue trends, monitor key performance metrics, and explore customer feedback through charts and tables. The system also includes a real-time review analyzer that processes new customer reviews and instantly generates sentiment predictions, issue classifications, and recommendations.
+
+Designed with scalability in mind, the solution can be integrated with AWS services such as Amazon S3, Amazon SageMaker, AWS Lambda, API Gateway, and Amazon Bedrock for cloud-based deployment and intelligent recommendation generation. By combining machine learning, sentiment analysis, and data visualization, this project demonstrates how AI can transform customer feedback into actionable insights that support data-driven decision-making and continuous service improvement within the airline industry.
