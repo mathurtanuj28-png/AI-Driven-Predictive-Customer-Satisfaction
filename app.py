@@ -1,67 +1,18 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import requests
+import json
+
+st.set_page_config(
+    page_title="British Airways AI Dashboard",
+    page_icon="✈️",
+    layout="wide"
+)
+
+API_URL = "https://u8optahibl.execute-api.us-east-1.amazonaws.com/prod/analyze"
 
 df = pd.read_csv("processed_reviews.csv")
-
-analyzer = SentimentIntensityAnalyzer()
-
-def get_sentiment(review):
-    score = analyzer.polarity_scores(str(review))
-    compound = score["compound"]
-
-    if compound >= 0.05:
-        return "Positive"
-    elif compound <= -0.05:
-        return "Negative"
-    else:
-        return "Neutral"
-
-def detect_issue(review):
-    review = str(review).lower()
-
-    if any(word in review for word in ["delay", "late", "waiting"]):
-        return "Flight Delay"
-
-    elif any(word in review for word in ["baggage", "luggage", "bag"]):
-        return "Baggage Issue"
-
-    elif any(word in review for word in ["staff", "crew", "service"]):
-        return "Customer Service"
-
-    elif any(word in review for word in ["food", "meal", "breakfast", "dinner"]):
-        return "Food Quality"
-
-    elif any(word in review for word in ["seat", "legroom", "space"]):
-        return "Seating Comfort"
-
-    else:
-        return "Other"
-
-def get_recommendation(issue):
-
-    recommendations = {
-        "Flight Delay":
-        "Provide travel vouchers and improve schedule management.",
-
-        "Customer Service":
-        "Conduct staff training and improve passenger support.",
-
-        "Baggage Issue":
-        "Improve baggage tracking and customer communication.",
-
-        "Food Quality":
-        "Review catering quality and expand meal options.",
-
-        "Seating Comfort":
-        "Improve seat quality and legroom experience.",
-
-        "Other":
-        "Investigate customer concerns individually."
-    }
-
-    return recommendations.get(issue, "No recommendation available")
 
 st.title("✈️ British Airways Customer Satisfaction Dashboard")
 
@@ -86,13 +37,13 @@ fig1 = px.pie(
     title="Customer Sentiment Distribution"
 )
 
-st.plotly_chart(fig1, use_container_width=True)
+st.plotly_chart(fig1, width="stretch")
 
 st.divider()
 
 st.subheader("Issue Breakdown")
 
-st.dataframe(issue_counts)
+st.dataframe(issue_counts, width="stretch")
 
 st.divider()
 
@@ -105,42 +56,86 @@ fig2 = px.bar(
     title="Top Customer Issues"
 )
 
-st.plotly_chart(fig2, use_container_width=True)
+st.plotly_chart(fig2, width="stretch")
 
 st.divider()
 
-st.subheader("Data")
+st.subheader("Dataset")
 
 st.dataframe(
-    df[
-        [
-            "sentiment",
-            "issue",
-            "recommendation"
-        ]
-    ]
+    df[["sentiment", "issue", "recommendation"]],
+    width="stretch"
 )
 
 st.divider()
 
-st.subheader("Analyze New Customer Review")
+st.header("🤖 AI Review Analyzer")
 
 user_review = st.text_area(
     "Enter Customer Review",
-    placeholder="Example: Flight delayed 5 hours and staff were rude."
+    placeholder="Example: Flight delayed / staff were rude."
 )
 
 if st.button("Analyze Review"):
 
-    if user_review.strip() != "":
-
-        sentiment = get_sentiment(user_review)
-        issue = detect_issue(user_review)
-        recommendation = get_recommendation(issue)
-
-        st.success(f"Sentiment: {sentiment}")
-        st.warning(f"Issue Detected: {issue}")
-        st.info(f"Recommendation: {recommendation}")
+    if not user_review.strip():
+        st.error("Please enter a review.")
 
     else:
-        st.error("Please enter a review.")
+
+        with st.spinner("Analyzing with Amazon Bedrock..."):
+
+            try:
+
+                response = requests.post(
+                    API_URL,
+                    json={"review": user_review},
+                    timeout=30
+                )
+
+                if response.status_code != 200:
+                    st.error(f"API Error ({response.status_code})")
+                    st.code(response.text)
+                    st.stop()
+
+                result = response.json()
+
+                if isinstance(result, dict) and "body" in result:
+                    result = json.loads(result["body"])
+
+                st.success(f"Sentiment: {result.get('sentiment','N/A')}")
+
+                c1, c2 = st.columns(2)
+
+                with c1:
+                    st.metric(
+                        "Predicted CSAT",
+                        result.get("predicted_csat", "N/A")
+                    )
+
+                with c2:
+                    st.metric(
+                        "Priority",
+                        result.get("priority", "N/A")
+                    )
+
+                st.subheader("Issue")
+                st.warning(result.get("issue", "N/A"))
+
+                st.subheader("Root Cause")
+                st.write(result.get("root_cause", "N/A"))
+
+                st.subheader("Business Impact")
+                st.info(result.get("business_impact", "N/A"))
+
+                st.subheader("Recommendation")
+                st.success(result.get("recommendation", "N/A"))
+
+            except requests.exceptions.Timeout:
+                st.error("Request timed out.")
+
+            except requests.exceptions.ConnectionError:
+                st.error("Could not connect to API Gateway.")
+
+            except Exception as e:
+                st.exception(e)
