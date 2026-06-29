@@ -1,0 +1,12 @@
+Tech Stack
+
+Programming Language:Python
+Frontend:Streamlit
+Data Processing:Pandas
+Data Visualization:Plotly Express
+Cloud Platform:Amazon Web Services (AWS)
+Generative AI:Amazon Bedrock (Amazon Nova Lite)
+API Management:Amazon API Gateway (REST API)
+Backend:AWS Lambda
+Data Format:JSON
+Dataset	:British Airways Customer Reviews (CSV)
