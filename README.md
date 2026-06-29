@@ -1,8 +1,18 @@
-# AI-Driven-Predictive-Customer-Satisfaction
-This project is an AI-powered Customer Satisfaction Analysis System developed to analyze British Airways customer reviews and generate meaningful business insights. Using Natural Language Processing (NLP) and the VADER Sentiment Analysis model, the system classifies customer feedback into Positive, Negative, or Neutral sentiments, enabling a better understanding of passenger experiences.
+✈️ AI-Driven Customer Satisfaction Analysis for British Airways
 
-The application also detects common service-related issues such as flight delays, baggage handling problems, customer service concerns, food quality complaints, and seating comfort issues. Based on the identified issue, the system provides actionable recommendations to help improve service quality and customer satisfaction.
+This project is an AI-powered customer feedback analysis system designed to help airlines understand passenger experiences and improve service quality. The application analyzes customer reviews using Amazon Bedrock (Nova Lite) and automatically identifies sentiment, predicted CSAT score, issue category, priority level, root cause, business impact, and actionable recommendations.
 
-An interactive dashboard built with Streamlit and Plotly allows users to visualize sentiment distribution, analyze issue trends, monitor key performance metrics, and explore customer feedback through charts and tables. The system also includes a real-time review analyzer that processes new customer reviews and instantly generates sentiment predictions, issue classifications, and recommendations.
+The solution is built using Python, Streamlit, AWS Lambda, Amazon API Gateway, Amazon Bedrock, Pandas, and Plotly. A clean and interactive Streamlit dashboard provides business insights through visualizations, including sentiment distribution, issue analysis, and dataset summaries. Users can also submit new reviews for real-time AI analysis powered by cloud-based foundation models.
 
-Designed with scalability in mind, the solution can be integrated with AWS services such as Amazon S3, Amazon SageMaker, AWS Lambda, API Gateway, and Amazon Bedrock for cloud-based deployment and intelligent recommendation generation. By combining machine learning, sentiment analysis, and data visualization, this project demonstrates how AI can transform customer feedback into actionable insights that support data-driven decision-making and continuous service improvement within the airline industry.
+The system follows a serverless architecture where Streamlit sends customer reviews to an API Gateway endpoint, which invokes an AWS Lambda function. The Lambda function communicates with Amazon Bedrock to generate structured AI insights, returning them to the dashboard within seconds.
+
+Features
+🤖 AI-powered review analysis using Amazon Bedrock
+😊 Sentiment classification and predicted CSAT score
+🚨 Issue detection and priority assessment
+🔍 Root cause and business impact identification
+💡 Actionable recommendations
+📊 Interactive dashboard with data visualizations
+☁️ Fully serverless AWS architecture
+
+This project demonstrates the practical application of Generative AI and cloud computing to enhance customer satisfaction analysis and support data-driven decision-making in the airline industry.
